@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hairFP the answer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=BIZ+UDPGothic:wght@400;700&family=DM+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --ink:#111;--paper:#faf9f6;--cream:#f0ede6;
+  --gold:#9a7c3a;--gold-l:#f5eed8;--gold-d:#7a5f28;
+  --border:#ddd;--dim:#888;--red:#b83030;--red-l:#fdf0ef;
+  --green:#2e7a4f;--green-l:#edf7f1;
+  --blue:#1a4e8a;--blue-l:#eef3fb;
+}
+html,body{min-height:100%;background:var(--paper);
+  font-family:'BIZ UDPGothic',sans-serif;color:var(--ink);}
+
+/* ── HEADER ── */
+header{background:var(--ink);padding:14px 18px;position:sticky;top:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1rem;
+  font-weight:300;color:#fff;letter-spacing:.15em;}
+.logo em{font-style:italic;color:#c8a96e;}
+.logo-sub{font-size:.5rem;color:rgba(255,255,255,.3);letter-spacing:.12em;}
+.hd-right{display:flex;gap:8px;align-items:center;}
+.hd-btn{padding:5px 12px;border:1px solid rgba(255,255,255,.2);border-radius:5px;
+  background:transparent;color:rgba(255,255,255,.7);font-size:.65rem;font-weight:700;
+  cursor:pointer;font-family:'BIZ UDPGothic',sans-serif;transition:.15s;}
+.hd-btn:active{background:rgba(255,255,255,.1);}
+.hd-btn.gold{background:var(--gold);border-color:var(--gold);color:#fff;}
+
+/* PROGRESS */
+#prog-wrap{height:3px;background:#333;}
+#prog{height:100%;background:var(--gold);transition:width .4s ease;width:0%;}
+
+/* MAIN */
+main{max-width:480px;margin:0 auto;padding:16px 16px 80px;}
+
+/* PAGE */
+.page{display:none;}
+.page.active{display:block;}
+
+/* SECTION TITLE */
+.sec-badge{display:inline-block;background:var(--gold);color:#fff;
+  font-size:.58rem;font-weight:700;letter-spacing:.15em;
+  padding:4px 14px;border-radius:20px;margin-bottom:10px;}
+.sec-h{font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.4rem,5.5vw,1.9rem);font-weight:300;
+  line-height:1.25;letter-spacing:.06em;margin-bottom:6px;}
+.sec-h em{color:var(--gold);font-style:italic;}
+.sec-h .num{font-family:'BIZ UDPGothic',sans-serif;font-weight:700;}
+.sec-txt{font-size:.78rem;color:#555;line-height:1.8;margin-bottom:16px;}
+
+/* CARD */
+.card{background:#fff;border-radius:12px;border:1px solid var(--border);
+  padding:16px;margin-bottom:12px;}
+.card-label{font-size:.6rem;font-weight:700;letter-spacing:.15em;
+  color:var(--gold);text-transform:uppercase;margin-bottom:8px;}
+.card-title{font-size:.92rem;font-weight:700;margin-bottom:10px;line-height:1.4;}
+
+/* INPUT */
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+.field label{font-size:.7rem;font-weight:700;color:var(--dim);}
+.field input,.field textarea,.field select{
+  padding:10px 12px;border-radius:8px;
+  border:1.5px solid var(--border);background:var(--paper);
+  font-family:'BIZ UDPGothic',sans-serif;font-size:.85rem;
+  color:var(--ink);outline:none;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--gold);}
+
+/* MENU MASTER TABLE */
+.menu-table{width:100%;border-collapse:collapse;}
+.menu-table th{font-size:.6rem;font-weight:700;color:var(--dim);
+  padding:6px 4px;text-align:center;border-bottom:2px solid var(--border);}
+.menu-table th:first-child{text-align:left;}
+.menu-table td{padding:6px 4px;border-bottom:1px solid var(--cream);}
+.menu-table td:first-child{font-size:.78rem;font-weight:700;color:var(--ink);}
+.price-input{width:100%;padding:6px 6px;border-radius:6px;
+  border:1.5px solid var(--border);background:var(--paper);
+  font-family:'DM Sans',sans-serif;font-size:.78rem;
+  color:var(--ink);outline:none;text-align:right;}
+.price-input:focus{border-color:var(--gold);}
+
+/* HAIR LENGTH CHIPS */
+.len-chips{display:flex;gap:6px;margin-bottom:10px;}
+.len-chip{flex:1;padding:9px 6px;border-radius:8px;
+  border:1.5px solid var(--border);background:var(--paper);
+  font-family:'BIZ UDPGothic',sans-serif;font-size:.78rem;font-weight:700;
+  cursor:pointer;text-align:center;transition:all .15s;color:var(--dim);}
+.len-chip.selected{background:var(--ink);border-color:var(--ink);color:#fff;}
+
+/* CODE INPUT */
+.code-area{width:100%;padding:12px;border-radius:8px;
+  border:2px dashed var(--gold);background:var(--gold-l);
+  font-family:'DM Sans',sans-serif;font-size:.7rem;
+  color:var(--ink);outline:none;resize:none;min-height:80px;line-height:1.5;}
+.code-area:focus{border-color:var(--gold-d);}
+
+/* BTN */
+.btn{width:100%;padding:14px;border-radius:12px;
+  font-family:'BIZ UDPGothic',sans-serif;font-size:.9rem;
+  font-weight:700;cursor:pointer;border:none;transition:all .15s;
+  letter-spacing:.04em;}
+.btn:active{transform:scale(.98);}
+.btn-ink{background:var(--ink);color:#fff;}
+.btn-gold{background:var(--gold);color:#fff;}
+.btn-outline{background:transparent;border:2px solid var(--border);color:var(--dim);}
+.btn-green{background:var(--green);color:#fff;}
+.btn+.btn{margin-top:8px;}
+
+/* AI LOADING */
+.ai-loading{text-align:center;padding:32px 20px;display:none;}
+.ai-loading.active{display:block;}
+.ai-spinner{width:40px;height:40px;border:3px solid var(--border);
+  border-top-color:var(--gold);border-radius:50%;
+  animation:spin .8s linear infinite;margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ai-msg{font-size:.82rem;color:var(--dim);line-height:1.7;}
+
+/* CALENDAR */
+.cal-block{margin-bottom:14px;}
+.cal-half-title{font-size:.65rem;font-weight:700;letter-spacing:.1em;
+  color:var(--dim);margin-bottom:6px;padding-left:2px;}
+.cal-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;}
+.cal-month{background:var(--cream);border-radius:8px;padding:6px 4px;min-height:72px;}
+.cal-month-name{font-size:.58rem;font-weight:700;color:var(--dim);
+  text-align:center;margin-bottom:4px;letter-spacing:.05em;}
+.cal-weeks{display:flex;flex-direction:column;gap:2px;}
+.cal-week{display:flex;justify-content:center;align-items:center;
+  min-height:12px;}
+.cal-dot{display:inline-flex;align-items:center;justify-content:center;
+  border-radius:50%;width:20px;height:20px;
+  font-size:.48rem;font-weight:700;color:#fff;flex-shrink:0;}
+.cal-dot.cut    {background:var(--ink);}
+.cal-dot.color  {background:#e07030;}
+.cal-dot.tr     {background:var(--blue);}
+.cal-dot.perm   {background:var(--green);}
+.cal-dot.kyosei {background:#7c4ba0;}
+.cal-dot.maegami{background:#c03070;}
+.cal-dot.multi  {background:var(--gold);}
+.cal-empty{width:20px;height:20px;}
+/* LEGEND */
+.cal-legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:.6rem;color:var(--dim);}
+.legend-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
+.sch-item{display:flex;gap:12px;align-items:flex-start;
+  padding:12px 14px;background:var(--cream);border-radius:10px;
+  border-left:4px solid var(--gold);}
+.sch-item.kyosei{border-left-color:#7c4ba0;}
+.sch-item.color{border-left-color:#e07030;}
+.sch-item.perm{border-left-color:#1a7a5a;}
+.sch-item.cut{border-left-color:var(--ink);}
+.sch-item.tr{border-left-color:var(--blue);}
+.sch-date{font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:700;
+  color:var(--gold-d);flex-shrink:0;width:80px;}
+.sch-menu{font-size:.82rem;font-weight:700;margin-bottom:2px;}
+.sch-price{font-family:'DM Sans',sans-serif;font-size:.72rem;color:var(--dim);}
+.sch-note{font-size:.7rem;color:var(--dim);margin-top:3px;line-height:1.5;}
+
+/* TODAY MENU */
+.today-menu{display:flex;flex-direction:column;gap:8px;}
+.menu-check{display:flex;align-items:center;gap:10px;
+  padding:12px 14px;background:#fff;border-radius:10px;
+  border:1.5px solid var(--border);cursor:pointer;transition:.15s;}
+.menu-check.checked{background:var(--green-l);border-color:var(--green);}
+.menu-check input[type=checkbox]{width:18px;height:18px;accent-color:var(--green);}
+.menu-check-label{flex:1;font-size:.85rem;font-weight:700;}
+.menu-check-price{font-family:'DM Sans',sans-serif;font-size:.82rem;
+  font-weight:700;color:var(--gold-d);}
+
+/* BUDGET SUMMARY */
+.budget-bar{background:var(--ink);border-radius:12px;padding:16px 18px;margin-bottom:12px;}
+.bb-label{font-size:.6rem;font-weight:700;letter-spacing:.15em;
+  color:rgba(255,255,255,.4);margin-bottom:4px;}
+.bb-val{font-family:'DM Sans',sans-serif;font-size:1.5rem;
+  font-weight:700;color:#fff;margin-bottom:2px;}
+.bb-note{font-size:.65rem;color:rgba(255,255,255,.35);}
+.budget-rows{display:flex;flex-direction:column;gap:6px;}
+.budget-row{display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid var(--border);}
+.budget-row:last-child{border-bottom:none;}
+.budget-row-key{font-size:.75rem;color:#555;}
+.budget-row-val{font-family:'DM Sans',sans-serif;font-size:.85rem;
+  font-weight:700;color:var(--ink);}
+.budget-row-val.green{color:var(--green);}
+.budget-row-val.red{color:var(--red);}
+
+/* FINAL PDF CARD */
+.final-card{background:var(--ink);border-radius:14px;padding:20px;
+  margin-bottom:12px;text-align:center;}
+.final-h{font-family:'Cormorant Garamond',serif;font-size:1.4rem;
+  font-weight:300;color:#fff;letter-spacing:.1em;margin-bottom:6px;}
+.final-h em{color:#c8a96e;font-style:italic;}
+.final-sub{font-size:.68rem;color:rgba(255,255,255,.35);}
+
+/* RESULT CARD */
+.r-card{background:#fff;border-radius:12px;border:1px solid var(--border);
+  padding:14px 16px;margin-bottom:10px;}
+.r-label{font-size:.58rem;font-weight:700;letter-spacing:.15em;
+  color:var(--gold);text-transform:uppercase;margin-bottom:6px;}
+.r-value{font-size:.88rem;font-weight:700;color:var(--ink);line-height:1.6;}
+.r-note{font-size:.7rem;color:var(--dim);margin-top:4px;line-height:1.5;}
+
+/* PLAN DIFF */
+.diff-box{border-radius:10px;padding:14px 16px;margin-bottom:10px;
+  border:2px solid;}
+.diff-box.plus{background:var(--green-l);border-color:var(--green);}
+.diff-box.minus{background:var(--red-l);border-color:var(--red);}
+.diff-label{font-size:.6rem;font-weight:700;letter-spacing:.1em;margin-bottom:4px;}
+.plus .diff-label{color:var(--green);}
+.minus .diff-label{color:var(--red);}
+.diff-val{font-family:'DM Sans',sans-serif;font-size:1.3rem;font-weight:700;}
+.plus .diff-val{color:var(--green);}
+.minus .diff-val{color:var(--red);}
+.diff-note{font-size:.72rem;margin-top:4px;line-height:1.6;}
+.plus .diff-note{color:#1a5a35;}
+.minus .diff-note{color:#7a1f1f;}
+
+/* PRINT */
+@media print{
+  header,#prog-wrap,#p-master,#p-input,#p-today,.btn,
+  .hd-right{display:none!important;}
+  #p-final{display:block!important;}
+  body{background:#fff;}
+}
+
+.disc{font-size:.6rem;color:var(--dim);line-height:1.75;
+  text-align:center;margin-bottom:14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">hairFP <em>the answer</em></div>
+    <div class="logo-sub">SALON PLANNING SYSTEM</div>
+  </div>
+  <div class="hd-right">
+    <button class="hd-btn" onclick="showPage('p-master')">⚙️ メニュー設定</button>
+  </div>
+</header>
+<div id="prog-wrap"><div id="prog"></div></div>
+
+<main>
+
+<!-- ══ PAGE: MASTER ══ -->
+<div class="page active" id="p-master">
+  <br>
+  <div class="sec-badge">SETUP — メニューマスタ</div>
+  <div class="sec-h">サロンの<em>メニュー価格</em>を登録してください</div>
+  <div class="sec-txt">一度登録するとこの端末に保存されます。価格はいつでも変更できます。</div>
+
+  <div class="card">
+    <div class="card-label">サロン名</div>
+    <div class="field">
+      <input type="text" id="salon-name" placeholder="例：Hair Salon ○○">
+    </div>
+    <div class="card-label">担当者名</div>
+    <div class="field">
+      <input type="text" id="staff-name" placeholder="例：田中 花子">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">メニュー価格（税込）</div>
+    <div class="card-title">髪の長さ別に価格を入力してください</div>
+    <table class="menu-table">
+      <thead>
+        <tr>
+          <th>メニュー</th>
+          <th>Short</th>
+          <th>Medium</th>
+          <th>Long</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>✂️ カット</td>
+          <td><input class="price-input" type="number" id="m-cut-s" placeholder="0"></td>
+          <td><input class="price-input" type="number" id="m-cut-m" placeholder="0"></td>
+          <td><input class="price-input" type="number" id="m-cut-l" placeholder="0"></td>
+        </tr>
+        <tr>
+          <td>🎨 カラー</td>
+          <td><input class="price-input" type="number" id="m-color-s" placeholder="0"></td>
+          <td><input class="price-input" type="number" id="m-color-m" placeholder="0"></td>
+          <td><input class="price-input" type="number" id="m-color-l" placeholder="0"></td>
+        </tr>
+        <tr>
+          <td>✨ トリートメント</td>
+          <td><input class="price-input" type="number" id="m-tr-s" placeholder="0"></td>
+          <td><input class="price-input" type="number" id="m-tr-m" placeholder="0"></td>
+          <td><input class="price-input" type="number" id="m-tr-l" placeholder="0"></td>
+        </tr>
+        <tr>
+          <td>〜 パーマ</td>
+          <td><input class="price-input" type="number" id="m-perm-s" placeholder="0"></td>
+          <td><input class="price-input" type="number" id="m-perm-m" placeholder="0"></td>
+          <td><input class="price-input" type="number" id="m-perm-l" placeholder="0"></td>
+        </tr>
+        <tr>
+          <td>💫 縮毛矯正</td>
+          <td><input class="price-input" type="number" id="m-kyosei-s" placeholder="0"></td>
+          <td><input class="price-input" type="number" id="m-kyosei-m" placeholder="0"></td>
+          <td><input class="price-input" type="number" id="m-kyosei-l" placeholder="0"></td>
+        </tr>
+        <tr>
+          <td>💫 前髪矯正</td>
+          <td colspan="3" style="text-align:center;">
+            <input class="price-input" type="number" id="m-maegami" placeholder="0（共通）" style="width:60%;">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <button class="btn btn-gold" onclick="saveMaster()">💾 保存する</button>
+  <button class="btn btn-ink" onclick="showPage('p-input')" style="margin-top:8px;">次へ → お客様データを読み込む</button>
+</div>
+
+<!-- ══ PAGE: INPUT ══ -->
+<div class="page" id="p-input">
+  <br>
+  <div class="sec-badge">STEP 1 — お客様情報</div>
+  <div class="sec-h">お客様の<em>情報を入力</em>してください</div>
+
+  <div class="card">
+    <div class="card-label">基本情報</div>
+    <div class="field">
+      <label>お客様名</label>
+      <input type="text" id="client-name" placeholder="例：山田 花子">
+    </div>
+    <div class="card-label" style="margin-top:4px;">髪の長さ</div>
+    <div class="len-chips">
+      <div class="len-chip" onclick="selectLen('s',this)">Short</div>
+      <div class="len-chip" onclick="selectLen('m',this)">Medium</div>
+      <div class="len-chip" onclick="selectLen('l',this)">Long</div>
+    </div>
+    <div class="card-label">初回来店日</div>
+    <div class="field">
+      <input type="date" id="first-visit">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">hairFP データコード</div>
+    <div class="card-title">お客様からのコードを貼り付けてください</div>
+    <textarea class="code-area" id="fp-code"
+      placeholder="hairFPアプリの「美容師へデータを渡す」ボタンでコピーしたコードをここに貼り付けてください"></textarea>
+    <button class="btn btn-outline" style="margin-top:8px;font-size:.78rem;padding:10px;"
+      onclick="loadCode()">📥 データを読み込む</button>
+    <div id="load-status" style="font-size:.72rem;margin-top:6px;color:var(--dim);"></div>
+  </div>
+
+  <button class="btn btn-gold" onclick="generateAnswer()">✨ AIでプランを作成する</button>
+  <button class="btn btn-outline" onclick="showPage('p-master')" style="margin-top:8px;">← メニュー設定へ戻る</button>
+</div>
+
+<!-- ══ PAGE: AI LOADING ══ -->
+<div class="page" id="p-loading">
+  <div style="padding:60px 20px;text-align:center;">
+    <div class="ai-spinner"></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;
+      color:var(--ink);letter-spacing:.1em;margin-bottom:10px;">
+      プランを<em style="color:var(--gold);font-style:italic;">作成中</em>
+    </div>
+    <div class="ai-msg" id="loading-msg">
+      お客様のデータを分析しています…
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE: SCHEDULE ══ -->
+<div class="page" id="p-schedule">
+  <br>
+  <div class="sec-badge">STEP 2 — 年間スケジュール</div>
+  <div class="sec-h"><em>AIが提案する</em><br><span class="num">2</span>年間の美髪計画</div>
+  <div class="sec-txt" id="sch-summary"></div>
+
+  <div class="card">
+    <div class="card-label">お客様サマリー</div>
+    <div id="client-summary" style="font-size:.82rem;line-height:1.8;color:var(--ink);"></div>
+  </div>
+
+  <!-- 凡例 -->
+  <div class="card">
+    <div class="card-label">凡例</div>
+    <div class="cal-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--ink)"></div>C：カット</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e07030"></div>HC：カラー</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>TR：トリートメント</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>P：パーマ</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7c4ba0"></div>ST：縮毛矯正</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#c03070"></div>FS：前髪矯正</div>
+    </div>
+  </div>
+
+  <!-- Year 1 前半 -->
+  <div class="card">
+    <div class="card-label" style="color:var(--ink);">📅 1年目（前半）</div>
+    <div class="cal-block"><div class="cal-grid" id="cal-y1-h1"></div></div>
+  </div>
+  <!-- Year 1 後半 -->
+  <div class="card">
+    <div class="card-label" style="color:var(--ink);">📅 1年目（後半）</div>
+    <div class="cal-block"><div class="cal-grid" id="cal-y1-h2"></div></div>
+  </div>
+  <!-- Year 2 前半 -->
+  <div class="card">
+    <div class="card-label" style="color:var(--blue);">📅 2年目（前半）</div>
+    <div class="cal-block"><div class="cal-grid" id="cal-y2-h1"></div></div>
+  </div>
+  <!-- Year 2 後半 -->
+  <div class="card">
+    <div class="card-label" style="color:var(--blue);">📅 2年目（後半）</div>
+    <div class="cal-block"><div class="cal-grid" id="cal-y2-h2"></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">AIからのコメント</div>
+    <div id="ai-comment" style="font-size:.82rem;line-height:1.8;color:#444;"></div>
+  </div>
+
+  <button class="btn btn-ink" onclick="showPage('p-today')">次へ → 本日のメニュー確認</button>
+  <button class="btn btn-outline" onclick="showPage('p-input')" style="margin-top:8px;">← 戻る</button>
+</div>
+
+<!-- ══ PAGE: TODAY ══ -->
+<div class="page" id="p-today">
+  <br>
+  <div class="sec-badge">STEP 3 — 本日のメニュー</div>
+  <div class="sec-h">本日の施術<em>メニューを確認</em>してください</div>
+
+  <div class="card">
+    <div class="card-label">施術メニュー（タップして選択）</div>
+    <div class="today-menu" id="today-menu-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">本日の合計</div>
+    <div class="budget-bar">
+      <div class="bb-label">本日の施術料金</div>
+      <div class="bb-val" id="today-total">¥0</div>
+      <div class="bb-note" id="today-menus">メニューを選択してください</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">次回来店のご提案</div>
+    <div id="next-visit-suggest" style="font-size:.85rem;line-height:1.8;
+      color:var(--ink);font-weight:700;"></div>
+    <div class="field" style="margin-top:10px;">
+      <label>次回予約日（確定後に入力）</label>
+      <input type="date" id="next-visit-date">
+    </div>
+    <div class="field">
+      <label>次回のご提案メニュー</label>
+      <input type="text" id="next-visit-menu" placeholder="例：カラー＋トリートメント">
+    </div>
+  </div>
+
+  <button class="btn btn-gold" onclick="generateFinal()">✨ ファイナルアンサーを作成</button>
+  <button class="btn btn-outline" onclick="showPage('p-schedule')" style="margin-top:8px;">← スケジュールへ戻る</button>
+</div>
+
+<!-- ══ PAGE: FINAL ══ -->
+<div class="page" id="p-final">
+  <br>
+  <div class="final-card">
+    <div class="final-h">美髪への<em>ファイナルアンサー</em></div>
+    <div class="final-sub" id="final-date">年間美髪計画書</div>
+  </div>
+
+  <!-- クライアント情報 -->
+  <div class="r-card">
+    <div class="r-label">お客様情報</div>
+    <div class="r-value" id="f-client"></div>
+    <div class="r-note" id="f-salon"></div>
+  </div>
+
+  <!-- 昨年実績 -->
+  <div class="r-card">
+    <div class="r-label">昨年の美容支出（実績）</div>
+    <div class="r-value" id="f-last-year"></div>
+    <div class="r-note" id="f-last-care"></div>
+  </div>
+
+  <!-- 2年間プラン -->
+  <div class="r-card">
+    <div class="r-label">📅 2年間の美髪計画</div>
+    <div class="budget-rows" id="f-plan-rows"></div>
+  </div>
+
+  <!-- 予算比較 -->
+  <div id="f-diff-box"></div>
+
+  <!-- 本日のメニュー -->
+  <div class="r-card">
+    <div class="r-label">本日の施術</div>
+    <div class="r-value" id="f-today-menu"></div>
+    <div class="r-note" id="f-today-price"></div>
+  </div>
+
+  <!-- 次回予約 -->
+  <div class="r-card">
+    <div class="r-label">次回のご来店</div>
+    <div class="r-value" id="f-next-visit"></div>
+    <div class="r-note" id="f-next-menu"></div>
+  </div>
+
+  <!-- AIコメント -->
+  <div class="r-card">
+    <div class="r-label">💬 担当者より</div>
+    <div style="font-size:.82rem;line-height:1.8;color:#444;" id="f-comment"></div>
+    <div style="margin-top:10px;font-size:.72rem;color:var(--dim);">
+      担当：<span id="f-staff"></span>
+    </div>
+  </div>
+
+  <div class="disc">
+    ※このプランはお客様のご要望・ご予算をもとにAIが提案したものです。<br>
+    実際の施術内容は担当スタイリストと都度ご確認ください。
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px;">
+    <button class="btn btn-gold" onclick="window.print()">📄 PDFとして保存・印刷</button>
+    <button class="btn btn-ink" onclick="shareAnswer()">📤 お客様にLINEで共有</button>
+    <button class="btn btn-outline" onclick="newClient()">+ 次のお客様</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ══ STATE ══
+let MASTER = {}; // サロンマスタ
+let FP = null;   // お客様FPデータ
+let PLAN = null; // AIプラン
+let selectedLen = null;
+let todayMenus = [];
+
+// ══ MASTER ══
+function saveMaster(){
+  MASTER = {
+    salonName: document.getElementById('salon-name').value || 'サロン',
+    staffName: document.getElementById('staff-name').value || '',
+    prices: {
+      cut:   {s: +document.getElementById('m-cut-s').value||0, m: +document.getElementById('m-cut-m').value||0, l: +document.getElementById('m-cut-l').value||0},
+      color: {s: +document.getElementById('m-color-s').value||0, m: +document.getElementById('m-color-m').value||0, l: +document.getElementById('m-color-l').value||0},
+      tr:    {s: +document.getElementById('m-tr-s').value||0, m: +document.getElementById('m-tr-m').value||0, l: +document.getElementById('m-tr-l').value||0},
+      perm:  {s: +document.getElementById('m-perm-s').value||0, m: +document.getElementById('m-perm-m').value||0, l: +document.getElementById('m-perm-l').value||0},
+      kyosei:{s: +document.getElementById('m-kyosei-s').value||0, m: +document.getElementById('m-kyosei-m').value||0, l: +document.getElementById('m-kyosei-l').value||0},
+      maegami: +document.getElementById('m-maegami').value||0
+    }
+  };
+  localStorage.setItem('hairfp_master', JSON.stringify(MASTER));
+  alert(`💾 保存しました！\n${MASTER.salonName}`);
+  showPage('p-input');
+}
+
+function loadMaster(){
+  const saved = localStorage.getItem('hairfp_master');
+  if(saved){
+    MASTER = JSON.parse(saved);
+    document.getElementById('salon-name').value = MASTER.salonName || '';
+    document.getElementById('staff-name').value = MASTER.staffName || '';
+    const p = MASTER.prices;
+    if(p){
+      ['s','m','l'].forEach(len=>{
+        ['cut','color','tr','perm','kyosei'].forEach(menu=>{
+          const el = document.getElementById(`m-${menu}-${len}`);
+          if(el && p[menu]) el.value = p[menu][len] || '';
+        });
+      });
+      if(p.maegami) document.getElementById('m-maegami').value = p.maegami;
+    }
+  }
+}
+
+// ══ HAIR LENGTH ══
+function selectLen(len, el){
+  selectedLen = len;
+  document.querySelectorAll('.len-chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ══ CODE LOAD ══
+function loadCode(){
+  const code = document.getElementById('fp-code').value.trim();
+  const status = document.getElementById('load-status');
+  if(!code){ status.textContent = '⚠️ コードを貼り付けてください'; status.style.color='var(--red)'; return; }
+  try {
+    FP = JSON.parse(decodeURIComponent(atob(code)));
+    status.textContent = `✅ データを読み込みました（${FP.date || '日付不明'}）`;
+    status.style.color = 'var(--green)';
+  } catch(e){
+    status.textContent = '❌ コードが正しくありません。もう一度コピーしてください。';
+    status.style.color = 'var(--red)';
+    FP = null;
+  }
+}
+
+// ══ AI GENERATE ══
+async function generateAnswer(){
+  if(!MASTER.salonName){ alert('⚠️ 先にメニュー設定を保存してください'); showPage('p-master'); return; }
+  if(!selectedLen){ alert('⚠️ 髪の長さを選択してください'); return; }
+  const clientName = document.getElementById('client-name').value || 'お客様';
+
+  showPage('p-loading');
+
+  // プロンプト作成
+  const priceTable = MASTER.prices;
+  const lenLabel = {s:'Short',m:'Medium',l:'Long'}[selectedLen];
+  const getPrice = (menu) => priceTable[menu] ? (priceTable[menu][selectedLen] || 0) : 0;
+
+  const fpSummary = FP ? `
+【お客様データ（hairFP）】
+昨年美容室支出：カット¥${FP.salon_cut?.price||0}×${FP.salon_cut?.count||0}回 / カラー¥${FP.salon_color?.price||0}×${FP.salon_color?.count||0}回 / トリートメント¥${FP.salon_tr?.price||0}×${FP.salon_tr?.count||0}回 / パーマ¥${FP.salon_perm?.price||0}×${FP.salon_perm?.count||0}回 / 縮毛矯正¥${FP.salon_kyosei?.price||0}×${FP.salon_kyosei?.count||0}回
+昨年ヘアケア支出：シャンプー¥${(FP.care_shampoo?.price||0)*(FP.care_shampoo?.count||0)} / インバス¥${(FP.care_inbath?.price||0)*(FP.care_inbath?.count||0)} / アウトバス合計¥${((FP.care_outbath1?.price||0)*(FP.care_outbath1?.count||0))+((FP.care_outbath2?.price||0)*(FP.care_outbath2?.count||0))}
+満足度：${FP.satisfaction}/5
+理想サイクル：カット${FP.cycle?.cut||'-'}日 / カラー${FP.cycle?.color||'-'}日 / トリートメント${FP.cycle?.tr||'-'}日 / パーマ${FP.cycle?.perm||'-'}日 / 縮毛矯正${FP.cycle?.kyosei||'-'}日
+年間予算（美容室）：¥${FP.budget?.toLocaleString()||'未設定'}
+お悩み：${FP.concerns?.join('・')||'なし'}
+イベント：${FP.events?.join('・')||'なし'}${FP.eventDate?' ('+FP.eventDate+')':''}
+` : '（hairFPデータなし：美容師の判断でプランを作成）';
+
+  const firstVisit = document.getElementById('first-visit').value;
+  const startMonth = firstVisit ? new Date(firstVisit).getMonth()+1 : new Date().getMonth()+1;
+
+  const prompt = `あなたは美容師のアシスタントAIです。以下の情報をもとに、お客様への2年間の美髪年間計画を作成してください。
+
+【サロン情報】
+サロン名：${MASTER.salonName}
+担当者：${MASTER.staffName}
+
+【お客様情報】
+名前：${clientName}
+髪の長さ：${lenLabel}
+起算月：${startMonth}月（この月を1ヶ月目として12ヶ月分×2年を計画する。monthは${startMonth}〜${startMonth+11}の実際の月番号で出力し、12を超えたら翌年として1〜12に戻す）
+
+【当サロンのメニュー価格（${lenLabel}）】
+カット：¥${getPrice('cut')} / カラー：¥${getPrice('color')} / トリートメント：¥${getPrice('tr')} / パーマ：¥${getPrice('perm')} / 縮毛矯正：¥${getPrice('kyosei')}
+
+${fpSummary}
+
+以下のJSON形式のみで回答してください（他のテキスト不要）：
+{
+  "startMonth": ${startMonth},
+  "clientSummary": "お客様の現状と課題を2〜3文で",
+  "year1": [
+    {"month": ${startMonth}, "week": 1, "menu": "メニュー名", "price": 金額, "type": "cut|color|tr|perm|kyosei|maegami", "note": "ポイント"}
+  ],
+  "year2": [
+    {"month": ${startMonth}, "week": 1, "menu": "メニュー名", "price": 金額, "type": "cut|color|tr|perm|kyosei|maegami", "note": "ポイント"}
+  ],
+  "year1Total": 年1合計金額,
+  "year2Total": 年2合計金額,
+  "todaySuggestion": ["カット", "カラー"],
+  "nextVisitSuggestion": "次回おすすめメニューと時期",
+  "comment": "担当者として美容師目線のコメント（2〜3文）"
+}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        messages: [{role:'user', content: prompt}]
+      })
+    });
+    const data = await res.json();
+    const text = data.content.map(i=>i.text||'').join('');
+    const clean = text.replace(/```json|```/g,'').trim();
+    PLAN = JSON.parse(clean);
+    renderSchedule(clientName);
+    showPage('p-schedule');
+  } catch(e) {
+    // fallback: generate basic plan without AI
+    PLAN = generateFallbackPlan(clientName, getPrice);
+    renderSchedule(clientName);
+    showPage('p-schedule');
+  }
+}
+
+// フォールバック（API失敗時）
+function generateFallbackPlan(clientName, getPrice){
+  const cycle = FP?.cycle || {cut:60,color:60,tr:0,perm:0,kyosei:0};
+  const firstVisit = document.getElementById('first-visit').value;
+  const startMonth = firstVisit ? new Date(firstVisit).getMonth()+1 : new Date().getMonth()+1;
+  const y1 = [], y2 = [];
+  const menuDef = [
+    {key:'cut', label:'カット', type:'cut'},
+    {key:'color', label:'カラー', type:'color'},
+    {key:'tr', label:'トリートメント', type:'tr'},
+    {key:'perm', label:'パーマ', type:'perm'},
+    {key:'kyosei', label:'縮毛矯正', type:'kyosei'},
+  ];
+  let y1total=0, y2total=0;
+  menuDef.forEach(m=>{
+    const days = cycle[m.key];
+    if(!days || days===0) return;
+    const count = Math.round(365/days);
+    const price = getPrice(m.key);
+    for(let i=0;i<count;i++){
+      const offset = Math.round(i*12/count);
+      const month = ((startMonth - 1 + offset) % 12) + 1;
+      const week = (i % 4) + 1;
+      y1.push({month, week, menu:m.label, price, type:m.type, note:''});
+      y2.push({month, week, menu:m.label, price, type:m.type, note:'2年目'});
+      y1total+=price; y2total+=price;
+    }
+  });
+  y1.sort((a,b)=>a.month-b.month||a.week-b.week);
+  y2.sort((a,b)=>a.month-b.month||a.week-b.week);
+  return {
+    startMonth,
+    clientSummary:`${clientName}様の理想サイクルをもとに2年間のプランを作成しました。`,
+    year1: y1, year2: y2,
+    year1Total: y1total, year2Total: y2total,
+    todaySuggestion: ['カット'],
+    nextVisitSuggestion: '次回は理想サイクルに合わせてご来店ください',
+    comment: `${clientName}様のご要望を最大限叶えるプランをご提案します。毎回のご来店でお悩みを解決してまいります。`
+  };
+}
+
+// ══ RENDER SCHEDULE（カレンダー形式） ══
+const TYPE_CODE = {cut:'C', color:'HC', tr:'TR', perm:'P', kyosei:'ST', maegami:'FS'};
+const MONTH_JP = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+
+function renderSchedule(clientName){
+  document.getElementById('client-summary').textContent = PLAN.clientSummary;
+  document.getElementById('sch-summary').textContent =
+    `1年目：¥${PLAN.year1Total?.toLocaleString()} ／ 2年目：¥${PLAN.year2Total?.toLocaleString()}`;
+  document.getElementById('ai-comment').textContent = PLAN.comment;
+
+  const startMonth = PLAN.startMonth || (new Date().getMonth()+1);
+
+  // 12ヶ月分の月番号配列を生成（起算月から）
+  const months = Array.from({length:12}, (_,i)=>((startMonth-1+i)%12)+1);
+
+  // items → {月: {週: [type,...]}} のマップに変換
+  const buildMap = (items) => {
+    const map = {};
+    (items||[]).forEach(item=>{
+      const m = item.month;
+      if(!map[m]) map[m]={};
+      const w = item.week||1;
+      if(!map[m][w]) map[m][w]=[];
+      map[m][w].push(item.type||'cut');
+    });
+    return map;
+  };
+
+  const renderCalGrid = (items, gridId, half) => {
+    const map = buildMap(items);
+    const wrap = document.getElementById(gridId);
+    wrap.innerHTML = '';
+    const halfMonths = months.slice(half===1?0:6, half===1?6:12);
+    halfMonths.forEach(m=>{
+      const col = document.createElement('div');
+      col.className = 'cal-month';
+      col.innerHTML = `<div class="cal-month-name">${MONTH_JP[m-1]}</div>`;
+      const weeksDiv = document.createElement('div');
+      weeksDiv.className = 'cal-weeks';
+      for(let w=1;w<=4;w++){
+        const row = document.createElement('div');
+        row.className = 'cal-week';
+        const types = map[m]?.[w] || [];
+        if(types.length===0){
+          row.innerHTML = `<div class="cal-empty"></div>`;
+        } else if(types.length===1){
+          const code = TYPE_CODE[types[0]]||'◎';
+          row.innerHTML = `<div class="cal-dot ${types[0]}" title="${types[0]}">${code}</div>`;
+        } else {
+          // 複数メニューの場合はゴールドで件数表示
+          row.innerHTML = `<div class="cal-dot multi" title="${types.join(',')}">${types.length}</div>`;
+        }
+        weeksDiv.appendChild(row);
+      }
+      col.appendChild(weeksDiv);
+      wrap.appendChild(col);
+    });
+  };
+
+  renderCalGrid(PLAN.year1, 'cal-y1-h1', 1);
+  renderCalGrid(PLAN.year1, 'cal-y1-h2', 2);
+  renderCalGrid(PLAN.year2, 'cal-y2-h1', 1);
+  renderCalGrid(PLAN.year2, 'cal-y2-h2', 2);
+
+  renderTodayMenu();
+}
+
+// ══ TODAY MENU ══
+function renderTodayMenu(){
+  const wrap = document.getElementById('today-menu-list');
+  wrap.innerHTML = '';
+  const p = MASTER.prices;
+  const len = selectedLen || 'm';
+  const menus = [
+    {id:'cut', label:'✂️ カット', price: p?.cut?.[len]||0},
+    {id:'color', label:'🎨 カラー', price: p?.color?.[len]||0},
+    {id:'tr', label:'✨ トリートメント', price: p?.tr?.[len]||0},
+    {id:'perm', label:'〜 パーマ', price: p?.perm?.[len]||0},
+    {id:'kyosei', label:'💫 縮毛矯正', price: p?.kyosei?.[len]||0},
+    {id:'maegami', label:'💫 前髪矯正', price: p?.maegami||0},
+  ];
+
+  // AIの提案をチェック済みにする
+  const suggested = PLAN?.todaySuggestion || [];
+
+  menus.forEach(m=>{
+    if(m.price === 0) return;
+    const div = document.createElement('div');
+    const isChecked = suggested.some(s=>m.label.includes(s)||s.includes(m.id));
+    div.className = `menu-check${isChecked?' checked':''}`;
+    if(isChecked) todayMenus.push(m);
+    div.innerHTML = `
+      <input type="checkbox" ${isChecked?'checked':''} onchange="toggleMenu(this,'${m.id}',${m.price},'${m.label}')">
+      <div class="menu-check-label">${m.label}</div>
+      <div class="menu-check-price">¥${m.price.toLocaleString()}</div>`;
+    wrap.appendChild(div);
+  });
+
+  updateTodayTotal();
+  document.getElementById('next-visit-suggest').textContent =
+    PLAN?.nextVisitSuggestion || '次回のご予約をご検討ください';
+}
+
+function toggleMenu(el, id, price, label){
+  el.closest('.menu-check').classList.toggle('checked', el.checked);
+  if(el.checked){
+    todayMenus.push({id, price, label});
+  } else {
+    todayMenus = todayMenus.filter(m=>m.id!==id);
+  }
+  updateTodayTotal();
+}
+
+function updateTodayTotal(){
+  const total = todayMenus.reduce((s,m)=>s+m.price, 0);
+  document.getElementById('today-total').textContent = `¥${total.toLocaleString()}`;
+  document.getElementById('today-menus').textContent =
+    todayMenus.length > 0 ? todayMenus.map(m=>m.label).join(' ＋ ') : 'メニューを選択してください';
+}
+
+// ══ FINAL ══
+function generateFinal(){
+  const clientName = document.getElementById('client-name').value || 'お客様';
+  const now = new Date();
+  document.getElementById('final-date').textContent =
+    `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 作成`;
+
+  document.getElementById('f-client').textContent =
+    `${clientName} 様（髪の長さ：${{s:'Short',m:'Medium',l:'Long'}[selectedLen||'m']}）`;
+  document.getElementById('f-salon').textContent =
+    `${MASTER.salonName} ／ 担当：${MASTER.staffName}`;
+
+  // 昨年実績
+  if(FP){
+    const salonTotal = (FP.salon_cut?.price||0)*(FP.salon_cut?.count||0)
+      + (FP.salon_color?.price||0)*(FP.salon_color?.count||0)
+      + (FP.salon_tr?.price||0)*(FP.salon_tr?.count||0)
+      + (FP.salon_perm?.price||0)*(FP.salon_perm?.count||0)
+      + (FP.salon_kyosei?.price||0)*(FP.salon_kyosei?.count||0);
+    const careTotal = (FP.care_shampoo?.price||0)*(FP.care_shampoo?.count||0)
+      + (FP.care_inbath?.price||0)*(FP.care_inbath?.count||0)
+      + (FP.care_outbath1?.price||0)*(FP.care_outbath1?.count||0)
+      + (FP.care_outbath2?.price||0)*(FP.care_outbath2?.count||0);
+    document.getElementById('f-last-year').textContent =
+      `美容室：¥${salonTotal.toLocaleString()} ／ 2年間想定：¥${(salonTotal*2).toLocaleString()}`;
+    document.getElementById('f-last-care').textContent =
+      `ヘアケア剤：¥${careTotal.toLocaleString()}/年`;
+  } else {
+    document.getElementById('f-last-year').textContent = 'データなし';
+    document.getElementById('f-last-care').textContent = '';
+  }
+
+  // 2年間プラン
+  const planRows = document.getElementById('f-plan-rows');
+  const y1 = PLAN?.year1Total || 0;
+  const y2 = PLAN?.year2Total || 0;
+  planRows.innerHTML = `
+    <div class="budget-row"><div class="budget-row-key">1年目 合計</div><div class="budget-row-val">¥${y1.toLocaleString()}</div></div>
+    <div class="budget-row"><div class="budget-row-key">2年目 合計</div><div class="budget-row-val">¥${y2.toLocaleString()}</div></div>
+    <div class="budget-row"><div class="budget-row-key" style="font-weight:700;">2年間 合計</div><div class="budget-row-val" style="font-size:1rem;">¥${(y1+y2).toLocaleString()}</div></div>`;
+
+  // 予算比較
+  if(FP?.budget){
+    const budget2y = FP.budget * 2;
+    const plan2y = y1 + y2;
+    const diff = budget2y - plan2y;
+    const box = document.getElementById('f-diff-box');
+    box.innerHTML = `<div class="diff-box ${diff>=0?'plus':'minus'}">
+      <div class="diff-label">${diff>=0?'予算との比較（余裕）':'予算との比較（超過）'}</div>
+      <div class="diff-val">${diff>=0?'+':'-'}¥${Math.abs(diff).toLocaleString()}</div>
+      <div class="diff-note">お客様の2年間予算：¥${budget2y.toLocaleString()} ／ プラン合計：¥${plan2y.toLocaleString()}<br>
+      ${diff>=0?'予算内に収まっています。余剰分はホームケアに活用できます。':'プランが予算を超えています。メニューの優先順位を調整しましょう。'}</div>
+    </div>`;
+  }
+
+  // 本日のメニュー
+  const todayTotal = todayMenus.reduce((s,m)=>s+m.price,0);
+  document.getElementById('f-today-menu').textContent =
+    todayMenus.length>0 ? todayMenus.map(m=>m.label).join(' ＋ ') : '—';
+  document.getElementById('f-today-price').textContent =
+    `本日の合計：¥${todayTotal.toLocaleString()}`;
+
+  // 次回
+  const nextDate = document.getElementById('next-visit-date').value;
+  const nextMenu = document.getElementById('next-visit-menu').value;
+  document.getElementById('f-next-visit').textContent =
+    nextDate ? `${nextDate.replace(/-/g,'/')}` : PLAN?.nextVisitSuggestion || '日程未定';
+  document.getElementById('f-next-menu').textContent =
+    nextMenu || '次回メニューは来店時にご相談ください';
+
+  document.getElementById('f-comment').textContent = PLAN?.comment || '';
+  document.getElementById('f-staff').textContent = MASTER.staffName || '';
+
+  showPage('p-final');
+}
+
+// ══ NAVIGATION ══
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const steps = {
+    'p-master':0,'p-input':20,'p-loading':40,
+    'p-schedule':60,'p-today':80,'p-final':100
+  };
+  document.getElementById('prog').style.width = (steps[id]||0)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══ SHARE ══
+function shareAnswer(){
+  const clientName = document.getElementById('client-name').value || 'お客様';
+  const y1 = PLAN?.year1Total||0, y2 = PLAN?.year2Total||0;
+  const txt = `【美髪年間計画書】\n${clientName} 様\n\n1年目：¥${y1.toLocaleString()}\n2年目：¥${y2.toLocaleString()}\n\n${PLAN?.comment||''}\n\n担当：${MASTER.staffName} / ${MASTER.salonName}`;
+  if(navigator.share){ navigator.share({title:'美髪年間計画', text:txt}); }
+  else { navigator.clipboard.writeText(txt).then(()=>alert('コピーしました！')); }
+}
+
+function newClient(){
+  FP = null; PLAN = null; todayMenus = []; selectedLen = null;
+  document.getElementById('client-name').value = '';
+  document.getElementById('fp-code').value = '';
+  document.getElementById('load-status').textContent = '';
+  document.getElementById('first-visit').value = '';
+  document.getElementById('next-visit-date').value = '';
+  document.getElementById('next-visit-menu').value = '';
+  document.querySelectorAll('.len-chip').forEach(c=>c.classList.remove('selected'));
+  showPage('p-input');
+}
+
+// ══ INIT ══
+loadMaster();
+// 今日の日付をデフォルトに
+document.getElementById('first-visit').value = new Date().toISOString().slice(0,10);
+</script>
+</body>
+</html>
